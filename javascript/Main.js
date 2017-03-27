@@ -2,7 +2,7 @@
  * Created by daddi on 3/25/2017.
  */
 var myCanvas = document.getElementById("myChart");
-var array = [12, 19, 3, 5, 2, 3,7];
+var array = [12, 19, 3, 5, 2, 3,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
 var myChart = new Chart(myCanvas, {
     type: 'bar',
     data: {
@@ -35,6 +35,10 @@ var myChart = new Chart(myCanvas, {
                 ticks: {
                     beginAtZero:true
                 }
+            }],
+            xAxes: [{
+                categoryPercentage: 1,
+                barPercentage:1
             }]
         }
     }
@@ -58,6 +62,11 @@ function shuffle(array) {
 
     return array;
 }
-
+var buttonShuffle = document.getElementById("shuffle");
+buttonShuffle.addEventListener("click",function()
+{
+    myChart.clear();
     setTimeout(myChart.data.datasets[0].data = shuffle(myChart.data.datasets[0].data), 2000);
     myChart.update();
+},false);
+
