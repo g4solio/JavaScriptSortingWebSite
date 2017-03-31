@@ -54,10 +54,17 @@
     <div class="col-sm-3 col-md-2 sidebar">
       <ul class="nav nav-sidebar">
         <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-        <li><a href="#">Reports</a></li>
-        <li><a href="#">Analytics</a></li>
-        <li><a href="#">Export</a></li>
-        <li><button id="shuffle">ciao</button></li>
+        <li><input type="text" name="Time"></li>
+        <li><input type="text" id="SizeArray" name="SizeArray"></li>
+        <li><button id="GenerateArray">GenerateArray</button></li>
+        <li> <select name="cars">
+                <option value="volvo">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="fiat">Fiat</option>
+                <option value="audi">Audi</option>
+              </select>
+        </li>
+        <li><button id="Shuffle">Shuffle</button></li>
       </ul>
     </div>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -78,7 +85,7 @@
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="../bootstrap/js/ie10-viewport-bug-workaround.js"></script>
 <script src="../javascript/chart.js"></script>
-<script src="../javascript/Main.js"></script>
+<script src="../javascript/ChartInstance.js"></script>
 <script src="../javascript/AddAndShuffle.js"></script>
 </body>
 </html>

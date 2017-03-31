@@ -17,20 +17,29 @@ function shuffle(array) {
 
     return array;
 }
-var buttonShuffle = document.getElementById("shuffle");
+var textInput = document.getElementById("SizeArray");
+var buttonShuffle = document.getElementById("Shuffle");
 buttonShuffle.addEventListener("click",function()
 {
-	for(var i = 0;i<20;i++)
-	{
-		myChart.clear();
-		setTimeout(myChart.data.datasets[0].data = shuffle(myChart.data.datasets[0].data), 2000);
-		var value = Math.floor((Math.random() * 100) + 1);;
-		myChart.data.datasets[0].data[myChart.data.datasets[0].data.length] = value;
-		myChart.data.labels[myChart.data.datasets[0].data.length-1] = "";
-		myChart.data.datasets[0].backgroundColor[myChart.data.datasets[0].data.length-1] = 'rgba(255,99,132,1)';
-		myChart.data.datasets[0].borderColor[myChart.data.datasets[0].data.length-1] = 'rgba(255,99,132,1)';
-		
-		myChart.update();
-	}
+
+    shuffle(myChart.data.datasets[0].data);
+	myChart.update();
+},false);
+
+var buttonCreateArray = document.getElementById("GenerateArray");
+buttonCreateArray.addEventListener("click",function () {
+    var lenght = parseInt(textInput.value);
+    myChart.data.datasets[0].data = [];
+    for(var i = 0;i<lenght;i++)
+    {
+        var value = Math.floor((Math.random() * 100) + 1);
+        myChart.data.datasets[0].data[i] = value;
+        myChart.data.labels[i] = "";
+        myChart.data.datasets[0].backgroundColor[i] = 'rgba(255,99,132,1)';
+        myChart.data.datasets[0].borderColor[i] = 'rgba(255,99,132,1)';
+        myChart.update();
+
+
+    }
 },false);
 
