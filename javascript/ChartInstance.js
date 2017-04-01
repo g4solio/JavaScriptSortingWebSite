@@ -1,7 +1,7 @@
 /**
  * Created by daddi on 3/25/2017.
  */
-var myCanvas = document.getElementById("myChart");
+var myCanvas = document.getElementById("myChart").getContext("2dw");
 var array = [];
 var myChart = new Chart(myCanvas, {
     type: 'bar',
