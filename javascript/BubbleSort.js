@@ -1,14 +1,14 @@
 
 function BubbleSort(array,i)
 {
-        HighlightsOn(i);
-        HighlightsOn(i+1);
+
          if (array[i] > array[i+1]) {
              var temp = array[i];
              array[i] = array[i+1];
              array[i+1] = temp;
+             return true;
          }
-
+    return false;
 		//myChart.render(1,false);
 
 		//alert("sono qui");
@@ -40,17 +40,24 @@ var index = 0;
 var buttonShuffle = document.getElementById("Shuffle");
 buttonShuffle.addEventListener("click",function()
 {
-    var array = myChart.data.datasets[0].data;
+    setInterval(function () {
+        var array = myChart.data.datasets[0].data;
 
-    if(index > array.length)
-        index = 0;
+        if (index > array.length)
+            index = 0;
 
-    HighlightsOff(index-1);
-    HighlightsOff(index);
-    BubbleSort(array,index);
-    index++;
-    myChart.update();
-    //alert(array.length);
+        HighlightsOff(index - 1);
+        HighlightsOff(index);
+        if (!BubbleSort(array, index)) {
+            index++;
+            cambiato = true;
+        }
+        HighlightsOn(index);
+        HighlightsOn(index + 1);
+        myChart.update();
+        //alert(array.length);
+    },500);
+
 
     //Prova(myChart.data.datasets[0].data);
 
