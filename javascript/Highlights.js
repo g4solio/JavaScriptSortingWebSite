@@ -1,15 +1,24 @@
 /**
  * Created by daddi on 4/2/2017.
  */
-function HighlightsOn(i)
+function HighlightsOn(i,t)
 {
-    myChart.data.datasets[0].backgroundColor[i] = 'rgba(100,100,132,1)';
+	setTimeout(function(){
+		myChart.data.datasets[0].backgroundColor[i] = 'rgba(100,100,132,1)';
+    	myChart.update();
+	},t);
+
 }
 
 function HighlightsOff(i,t)
 {
+	
+	setTimeout(function()
+	{
+		myChart.data.datasets[0].backgroundColor[i] = 'rgba(255,99,132,1)';
+		myChart.update();
 
-    myChart.data.datasets[0].backgroundColor[i] = 'rgba(255,99,132,1)';
+	},t);
 
 }
 

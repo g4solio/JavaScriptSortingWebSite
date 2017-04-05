@@ -46,8 +46,8 @@ buttonShuffle.addEventListener("click",function()
         if (index > array.length)
             index = 0;
 
-        HighlightsOff(index - 1);
-        HighlightsOff(index);
+        HighlightsOff(index - 1,1);
+        HighlightsOff(index,1);
         if (!BubbleSort(array, index)) {
             index++;
             cambiato = true;

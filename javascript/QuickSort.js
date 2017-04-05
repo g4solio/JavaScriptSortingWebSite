@@ -1,31 +1,33 @@
-async function QuickSort(arr, left, right){
+function QuickSort(arr, left, right){
     var len = arr.length,
         pivot,
         partitionIndex;
 
-    HighlightsOn(left);
-    HighlightsOn(right);
+    HighlightsOn(left,500);
+    HighlightsOn(right,500);
 
 
     if(left < right){
         pivot = right;
         partitionIndex = Partition(arr, pivot, left, right);
-        HighlightOnPivot(pivot);
+        HighlightOnPivot(pivot,1);
         //await sleep(10000);
         //sort left and right
         myChart.update();
-        setTimeout(function ()
+        setTimeout(function()
         {
             QuickSort(arr, left, partitionIndex - 1);
             QuickSort(arr, partitionIndex + 1, right);
+        },1000);
 
-        },300);
+
+        
     }
-    setTimeout(function () {
-        HighlightsOff(left);
-        HighlightsOff(right);
-        HighlightsOff(pivot);
-    },300);
+
+        HighlightsOff(left,1000);
+        HighlightsOff(right,1000);
+        HighlightsOff(pivot,1000);
+
     return arr;
 
 }
@@ -91,7 +93,7 @@ function Partition(arr, pivot, left, right){
 // }
 //
 function Swap(arr, i, j){
-    sleep(300);
+    
     var temp = arr[i];
     arr[i] = arr[j];
     arr[j] = temp;
