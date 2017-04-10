@@ -37,30 +37,5 @@ function BubbleSort(array,i)
  //     }
  // }
 var index = 0;
-var buttonShuffle = document.getElementById("Shuffle");
-buttonShuffle.addEventListener("click",function()
-{
-    setInterval(function () {
-        var array = myChart.data.datasets[0].data;
-
-        if (index > array.length)
-            index = 0;
-
-        HighlightsOff(index - 1,1);
-        HighlightsOff(index,1);
-        if (!BubbleSort(array, index)) {
-            index++;
-            cambiato = true;
-        }
-        HighlightsOn(index);
-        HighlightsOn(index + 1);
-        myChart.update();
-        //alert(array.length);
-    },500);
-
-
-    //Prova(myChart.data.datasets[0].data);
-
-},false);
 
 
