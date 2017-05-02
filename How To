@@ -1,0 +1,6 @@
+How To
+-vai nella cartella del'index e da terminale dai
+
+python -m SimpleHTTPServer
+
+-Poi tenendo il terminale aperto vai da browser al link localhost:8000
