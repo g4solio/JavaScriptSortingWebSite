@@ -124,6 +124,7 @@
 
     var li = document.createElement('li');
     li.id = 'li_' + todo._id;
+    li.className = 'Draggable';
     li.appendChild(divDisplay);
     li.appendChild(inputEditTodo);
 
@@ -136,11 +137,13 @@
   }
 
   function redrawTodosUI(todos) {
-    var ul = document.getElementById('todo-list');
+    var ul = document.getElementById('todoList');
     ul.innerHTML = '';
     todos.forEach(function(todo) {
-      ul.appendChild(createTodoListItem(todo.doc));
+      var todoCreated = createTodoListItem(todo.doc);
+      ul.appendChild(todoCreated);
     });
+    UpdateDragAndDrop();
   }
 
   function newTodoKeyPressHandler( event ) {
@@ -160,6 +163,48 @@
   if (remoteCouch) {
     sync();
   }
+
+
+  function RemoveElements(todos) {
+
+    todos.forEach(function(todo) {
+
+      db.remove(todo.doc);
+    });
+  }
+ var Fresh = {
+
+  notify:function(el)
+  {
+    var listNew = [{}];
+    var ul = document.getElementById("todoList");
+    var items = ul.getElementsByTagName("li");
+    for (var i = 0; i < items.length; ++i) {
+      var todoDB = db.get(items[i].id);
+      console.log(todoDB);
+        var todo = {
+        _id: todoDB.id,
+        title: todoDB.text,
+        completed: todoDB.completed
+      }; 
+      listNew.push(todo);
+    }
+
+    db.allDocs({include_docs: true, descending: true}, function(err, doc) {
+      RemoveElements(doc.rows);
+    });
+    console.log(listNew[1]);
+    listNew.forEach(function(todo)
+    {
+      db.put(todo, function callback(err, result) {
+      if (!err) {
+        console.log('Successfully posted a todo! ver2');
+      }
+    });
+    });
+  }
+ }
+ window.Fresh = Fresh;
 
 })();
 
