@@ -19,15 +19,15 @@
   }).on('change', showTodos);
 
   // We have to create a new todo document and enter it in the database
-  function addTodo(text) {
+  function addTodo(text, completed) {
     var todo = {
       _id: new Date().toISOString(),
       title: text,
-      completed: false
+      completed: completed
     };
     db.put(todo, function callback(err, result) {
       if (!err) {
-        console.log('Successfully posted a todo!');
+        //console.log('Successfully posted a todo!');
       }
     });
   }
@@ -78,7 +78,7 @@
 
   // User has double clicked a todo, display an input so they can edit the title
   function todoDblClicked(todo) {
-    var div = document.getElementById('li_' + todo._id);
+    var div = document.getElementById(todo._id);
     var inputEditTodo = document.getElementById('input_' + todo._id);
     div.className = 'editing';
     inputEditTodo.focus();
@@ -123,7 +123,7 @@
     inputEditTodo.addEventListener('blur', todoBlurred.bind(this, todo));
 
     var li = document.createElement('li');
-    li.id = 'li_' + todo._id;
+    li.id = todo._id;
     li.className = 'Draggable';
     li.appendChild(divDisplay);
     li.appendChild(inputEditTodo);
@@ -143,12 +143,11 @@
       var todoCreated = createTodoListItem(todo.doc);
       ul.appendChild(todoCreated);
     });
-    UpdateDragAndDrop();
   }
 
   function newTodoKeyPressHandler( event ) {
     if (event.keyCode === ENTER_KEY) {
-      addTodo(newTodoDom.value);
+      addTodo(newTodoDom.value, false);
       newTodoDom.value = '';
     }
   }
@@ -159,49 +158,78 @@
 
   addEventListeners();
   showTodos();
+  UpdateDragAndDrop();
+
 
   if (remoteCouch) {
     sync();
   }
 
 
-  function RemoveElements(todos) {
-
-    todos.forEach(function(todo) {
-
-      db.remove(todo.doc);
-    });
-  }
  var Fresh = {
 
   notify:function(el)
   {
-    var listNew = [{}];
     var ul = document.getElementById("todoList");
     var items = ul.getElementsByTagName("li");
+    var promises = [];
+    var deletePromises = [];
     for (var i = 0; i < items.length; ++i) {
-      var todoDB = db.get(items[i].id);
-      console.log(todoDB);
-        var todo = {
-        _id: todoDB.id,
-        title: todoDB.text,
-        completed: todoDB.completed
-      }; 
-      listNew.push(todo);
-    }
+      db.get(items[i].id).then(function(todo)
+        {
+          var todo = {
 
-    db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-      RemoveElements(doc.rows);
-    });
-    console.log(listNew[1]);
-    listNew.forEach(function(todo)
+          };
+          //console.log("test"+todo);
+        });
+      var todoDB = db.get(items[i].id).then(function(todo)
+        {
+          return todo;
+        });
+
+      promises.push(todoDB);
+    }
+    Promise.all(promises).then(todos => {
+        todos.forEach(function (todo)
+          {
+
+            var switchTodo = todo;
+                                  //console.log("finito "+ switchTodo.title);
+
+            deletePromises.push(db.remove(todo).then(function(){
+              //console.log(switchTodo.title);
+              return switchTodo;
+            }));
+ 
+          });
+
+    }).then(function()
     {
-      db.put(todo, function callback(err, result) {
-      if (!err) {
-        console.log('Successfully posted a todo! ver2');
-      }
+      Promise.all(deletePromises).then(deletes => {
+      //console.log(deletes);
+      deletes.reverse();
+      deletes.forEach(function(todo)
+        {
+            //console.log(todo.title);
+            var todoNew = {
+              _id: new Date().toISOString(),
+              title: todo.title,
+              completed: todo.completed
+            };
+            addTodo(todo.title,todo.completed);
+          // db.put(todoNew).then(function()
+          //   {
+          //     //console.log("wow");
+          //   }).catch(function(err)
+          //   {
+          //     //console.log("porcodio "+ err);
+          //   });
+        });
     });
+
     });
+
+
   }
  }
  window.Fresh = Fresh;
