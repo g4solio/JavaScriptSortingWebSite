@@ -5,6 +5,7 @@
   opacity: 0.8;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
   filter: alpha(opacity=80);
+  list-style: none;
 }
 .gu-hide {
   display: none !important;
@@ -20,3 +21,4 @@
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
   filter: alpha(opacity=20);
 }
+

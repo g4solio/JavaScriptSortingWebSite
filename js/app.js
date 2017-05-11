@@ -6,9 +6,10 @@
   var newTodoDom = document.getElementById('new-todo');
   var syncDom = document.getElementById('sync-wrapper');
 
+
   // EDITING STARTS HERE (you dont need to edit anything above this line)
 
-  var db = new PouchDB('todos');
+  var db = new PouchDB('TodosNew');
 
   // Replace with remote instance, this just replicates to another local instance.
   var remoteCouch = 'todos_remote';
@@ -17,7 +18,7 @@
     since: 'now',
     live: true
   }).on('change', showTodos);
-
+  var dbChangedPromises = [];
   // We have to create a new todo document and enter it in the database
   function addTodo(text, completed) {
     var todo = {
@@ -25,9 +26,9 @@
       title: text,
       completed: completed
     };
-    db.put(todo, function callback(err, result) {
+    return db.put(todo, function callback(err, result) {
       if (!err) {
-        //console.log('Successfully posted a todo!');
+        return result;
       }
     });
   }
@@ -174,63 +175,64 @@
     var items = ul.getElementsByTagName("li");
     var promises = [];
     var deletePromises = [];
-    for (var i = 0; i < items.length; ++i) {
-      db.get(items[i].id).then(function(todo)
-        {
-          var todo = {
+    Promise.all(dbChangedPromises).then(useless => {
+      console.log(dbChangedPromises);
+      dbChangedPromises = [];
+      for (var i = 0; i < items.length; ++i) {
 
-          };
-          //console.log("test"+todo);
-        });
-      var todoDB = db.get(items[i].id).then(function(todo)
-        {
-          return todo;
-        });
-
-      promises.push(todoDB);
-    }
-    Promise.all(promises).then(todos => {
-        todos.forEach(function (todo)
+        var todoDB = db.get(items[i].id).then(function(todo)
           {
-
-            var switchTodo = todo;
-                                  //console.log("finito "+ switchTodo.title);
-
-            deletePromises.push(db.remove(todo).then(function(){
-              //console.log(switchTodo.title);
-              return switchTodo;
-            }));
- 
+            return todo;
+          }).catch(err => {
+            console.log(err);
           });
 
-    }).then(function()
-    {
-      Promise.all(deletePromises).then(deletes => {
-      //console.log(deletes);
-      deletes.reverse();
-      deletes.forEach(function(todo)
-        {
-            //console.log(todo.title);
-            var todoNew = {
-              _id: new Date().toISOString(),
-              title: todo.title,
-              completed: todo.completed
-            };
-            addTodo(todo.title,todo.completed);
-          // db.put(todoNew).then(function()
-          //   {
-          //     //console.log("wow");
-          //   }).catch(function(err)
-          //   {
-          //     //console.log("porcodio "+ err);
-          //   });
-        });
-    });
+        promises.push(todoDB);
+        dbChangedPromises.push(promises);
+      }
+      Promise.all(promises).then(todos => {
+          todos.forEach(function (todo)
+            {
 
-    });
+              var switchTodo = todo;
+                                    //console.log("finito "+ switchTodo.title);
 
+              deletePromises.push(db.remove(todo).then(function(){
+                //console.log(switchTodo.title);
+                return switchTodo;
+              }));
+            dbChangedPromises.push(deletePromises);
+            });
 
+      }).then(function()
+      {
+        Promise.all(deletePromises).then(deletes => {
+        //console.log(deletes);
+        deletes.reverse();
+        deletes.forEach(function(todo)
+          {
+              console.log(todo.title);
+              var todoNew = {
+                _id: new Date().toISOString(),
+                title: todo.title,
+                completed: todo.completed
+              };
+              dbChangedPromises.push(addTodo(todo.title,todo.completed));
+            // db.put(todoNew).then(function()
+            //   {
+            //     //console.log("wow");
+            //   }).catch(function(err)
+            //   {
+            //     //console.log("porcodio "+ err);
+            //   });
+          });
+      });
+
+      });
+
+      });
   }
+
  }
  window.Fresh = Fresh;
 
