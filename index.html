@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>VanillaJS • TodoMVC</title>
+    <title>Agenda 2017-2018</title>
     <link rel="stylesheet" href="style/base.css">
     <link rel="stylesheet" href="style/dragula.css">
     <!--[if IE]>
@@ -13,8 +13,16 @@
   <body>
     <section id="todoapp">
       <header id="header">
-        <h1>todos</h1>
-        <input id="new-todo" placeholder="What needs to be done?" autofocus>
+        <h1><i>Agenda</i></h1>
+        <input id="new-todo" placeholder="Aggiungi impegno" autofocus>
+        <!--lista-->
+        <select id="lists" name="sometext" multiple="multiple">
+          <option>text1</option>
+          <option>text2</option>
+          <option>text3</option>
+          <option>text4</option>
+          <option>text5</option>
+        </select>
       </header>
       <div  class="container">
         <section id="main">
@@ -24,14 +32,11 @@
       <footer id="footer">
         <span id="todo-count"></span>
         <div id="sync-wrapper">
-          <div id="sync-success">Currently syncing</div>
-          <div id="sync-error">There was a problem syncing</div>
+          <div id="sync-success">Sincronizzazione in corso</div>
+          <div id="sync-error">Problema durante la sincronizzazione</div>
         </div>
       </footer>
     </section>
-    <footer id="info">
-      <p>Double-click to edit a todo</p>
-    </footer>
     <script src="js/easytimer.min.js"></script>
     <script src="js/pouchdb.js"></script>
     <script src="js/dragula.js"></script>

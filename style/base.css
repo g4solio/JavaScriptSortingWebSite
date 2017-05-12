@@ -23,7 +23,7 @@ button {
 body {
   font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
   line-height: 1.4em;
-  background: #eaeaea url('bg.png');
+  background-image: url('bg.png');
   color: #4d4d4d;
   width: 550px;
   margin: 0 auto;
@@ -73,8 +73,8 @@ body {
   font-size: 70px;
   font-weight: bold;
   text-align: center;
-  color: #b3b3b3;
-  color: rgba(255, 255, 255, 0.3);
+  color: #85ada7;
+  color: rgba(255, 255, 255, 0.8);
   text-shadow: -1px -1px rgba(0, 0, 0, 0.2);
   -webkit-text-rendering: optimizeLegibility;
   -moz-text-rendering: optimizeLegibility;
@@ -97,10 +97,10 @@ body {
   height: 15px;
   z-index: 2;
   border-bottom: 1px solid #6c615c;
-  background: #8d7d77;
-  background: -webkit-gradient(linear, left top, left bottom, from(rgba(132, 110, 100, 0.8)),to(rgba(101, 84, 76, 0.8)));
-  background: -webkit-linear-gradient(top, rgba(132, 110, 100, 0.8), rgba(101, 84, 76, 0.8));
-  background: -moz-linear-gradient(top, rgba(132, 110, 100, 0.8), rgba(101, 84, 76, 0.8));
+  background: rgba(202, 82, 86, 0.79);
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(132, 110, 100, 0.8)),to(rgba(202, 82, 86, 0.79)));
+  background: -webkit-linear-gradient(top, rgba(132, 110, 100, 0.8), rgba(202, 82, 86, 0.79));
+  background: -moz-linear-gradient(top, rgba(132, 110, 100, 0.8), rgba(202, 82, 86, 0.79));
   background: -o-linear-gradient(top, rgba(132, 110, 100, 0.8), rgba(101, 84, 76, 0.8));
   background: -ms-linear-gradient(top, rgba(132, 110, 100, 0.8), rgba(101, 84, 76, 0.8));
   background: linear-gradient(top, rgba(132, 110, 100, 0.8), rgba(101, 84, 76, 0.8));
@@ -136,6 +136,14 @@ body {
 }
 
 #new-todo {
+  padding: 16px 16px 16px 60px;
+  border: none;
+  background: rgba(0, 0, 0, 0.02);
+  z-index: 2;
+  box-shadow: none;
+}
+#lists {
+  position: relative;
   padding: 16px 16px 16px 60px;
   border: none;
   background: rgba(0, 0, 0, 0.02);
