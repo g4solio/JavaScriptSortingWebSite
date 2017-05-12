@@ -9,8 +9,8 @@
 
   // EDITING STARTS HERE (you dont need to edit anything above this line)
 
-  var db = new PouchDB('TodosNew');
-
+  var db = new PouchDB('DatabaseTodosV5');
+  PouchDB.debug.enable('pouchdb:find');
   // Replace with remote instance, this just replicates to another local instance.
   var remoteCouch = 'todos_remote';
 
@@ -20,17 +20,24 @@
   }).on('change', showTodos);
   var dbChangedPromises = [];
   // We have to create a new todo document and enter it in the database
-  function addTodo(text, completed) {
-    var todo = {
-      _id: new Date().toISOString(),
-      title: text,
-      completed: completed
-    };
-    return db.put(todo, function callback(err, result) {
-      if (!err) {
-        return result;
-      }
-    });
+  function addTodo(text, completed, time) {
+    console.log("wow " + text);
+    if(text)
+    {
+      var todo = {
+        _id: new Date().toISOString(),
+        title: text,
+        completed: completed,
+        timeRemaning: time,
+        canFlow: true
+      };
+      return db.put(todo, function callback(err, result) {
+        console.log(err);
+        if (!err) {
+          return result;
+        }
+      });
+  }
   }
 
   // Show the current list of todos by reading them from the database
@@ -42,12 +49,17 @@
 
   function checkboxChanged(todo, event) {
     todo.completed = event.target.checked;
-    db.put(todo);
+    Promise.all(dbChangedPromises).then(function(){
+      dbChangedPromises.push(db.put(todo));
+    });
+    
   }
 
   // User pressed the delete button for a todo, delete it
   function deleteButtonPressed(todo) {
-    db.remove(todo);
+    Promise.all(dbChangedPromises).then(function(){
+      dbChangedPromises.push(db.remove(todo));
+    });
   }
 
   // The input box when editing a todo has blurred, we should save
@@ -55,10 +67,17 @@
   function todoBlurred(todo, event) {
     var trimmedText = event.target.value.trim();
     if (!trimmedText) {
-      db.remove(todo);
+    Promise.all(dbChangedPromises).then(function(){
+      dbChangedPromises.push(db.remove(todo));
+
+    });
+      
     } else {
       todo.title = trimmedText;
-      db.put(todo);
+    Promise.all(dbChangedPromises).then(function(){
+      dbChangedPromises.push(db.put(todo));
+
+    });
     }
   }
 
@@ -110,11 +129,26 @@
     deleteLink.className = 'destroy';
     deleteLink.addEventListener( 'click', deleteButtonPressed.bind(this, todo));
 
+
+    var timeFlowSwitch = document.createElement("button");
+    timeFlowSwitch.className = "timeFlowSwitch";
+    timeFlowSwitch.addEventListener("click", function(){
+      if(todo.timeFlowSwitch == false)
+      {
+        todo.timeFlowSwitch = true;
+      }
+      else
+      {
+        todo.timeFlowSwitch = false;
+      }
+    });
+
     var divDisplay = document.createElement('div');
     divDisplay.className = 'view';
     divDisplay.appendChild(checkbox);
     divDisplay.appendChild(label);
     divDisplay.appendChild(deleteLink);
+    divDisplay.appendChild(timeFlowSwitch);
 
     var inputEditTodo = document.createElement('input');
     inputEditTodo.id = 'input_' + todo._id;
@@ -141,15 +175,29 @@
     var ul = document.getElementById('todoList');
     ul.innerHTML = '';
     todos.forEach(function(todo) {
-      var todoCreated = createTodoListItem(todo.doc);
-      ul.appendChild(todoCreated);
+      if(todo.doc.title)
+      {
+       var todoCreated = createTodoListItem(todo.doc);
+        ul.appendChild(todoCreated);
+      }
+      else
+      {
+        Promise.all(dbChangedPromises).then(function(){
+
+          dbChangedPromises.push(db.remove(todo));
+        });
+      }
     });
   }
 
   function newTodoKeyPressHandler( event ) {
     if (event.keyCode === ENTER_KEY) {
-      addTodo(newTodoDom.value, false);
-      newTodoDom.value = '';
+      Promise.all(dbChangedPromises).then(function(){
+        dbChangedPromises = [];
+        dbChangedPromises.push(addTodo(newTodoDom.value, false, 30));
+        newTodoDom.value = '';
+      });
+      
     }
   }
 
@@ -160,8 +208,31 @@
   addEventListeners();
   showTodos();
   UpdateDragAndDrop();
+  StartTimer();
+  function StartTimer()
+  {
+    var timer = new Timer();
+    timer.start();
+    timer.addEventListener('secondsUpdated', function (e) {
+      db.allDocs({include_docs: true, descending: true}, function(err, doc) {
 
-
+        doc.rows.forEach(function(todo)
+          {
+            if(todo.doc.canFlow)
+            {
+              if(todo.doc.timeRemaning > 0)
+              {
+                todo.doc.timeRemaning = todo.doc.timeRemaning - 1;
+                console.log(todo.doc.timeRemaning);
+                Promise.all(dbChangedPromises).then(function(){
+                  db.put(todo.doc);
+                });
+              }
+            }
+          });
+      });
+    });
+  }
   if (remoteCouch) {
     sync();
   }
@@ -200,7 +271,7 @@
               deletePromises.push(db.remove(todo).then(function(){
                 //console.log(switchTodo.title);
                 return switchTodo;
-              }));
+              }).catch());
             dbChangedPromises.push(deletePromises);
             });
 
@@ -212,12 +283,10 @@
         deletes.forEach(function(todo)
           {
               console.log(todo.title);
-              var todoNew = {
-                _id: new Date().toISOString(),
-                title: todo.title,
-                completed: todo.completed
-              };
-              dbChangedPromises.push(addTodo(todo.title,todo.completed));
+
+              dbChangedPromises.push(addTodo(todo.title,todo.completed,todo.timeRemaning).catch(err =>{
+                console.log(err);
+              }));
             // db.put(todoNew).then(function()
             //   {
             //     //console.log("wow");
