@@ -14,7 +14,10 @@ button {
   font-family: inherit;
   color: inherit;
   -webkit-appearance: none;
-
+  /*-moz-appearance: none;*/
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
 }
 
 body {
@@ -263,6 +266,22 @@ li .destroy {
   margin: auto 0;
   font-size: 22px;
   color: #a88a8a;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+}
+li .timeFlowSwitch {
+  position: absolute;
+  top: 0;
+  right: 60px;
+  bottom: 0;
+  width: 40px;
+  height: 40px;
+  margin: auto 0;
+  font-size: 22px;
+  background-color: #29db53 !important;
   -webkit-transition: all 0.2s;
   -moz-transition: all 0.2s;
   -ms-transition: all 0.2s;

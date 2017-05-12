@@ -20,7 +20,7 @@
   }).on('change', showTodos);
   var dbChangedPromises = [];
   // We have to create a new todo document and enter it in the database
-  function addTodo(text, completed, time) {
+  function addTodo(text, completed, time, flow) {
     console.log("wow " + text);
     if(text)
     {
@@ -29,7 +29,7 @@
         title: text,
         completed: completed,
         timeRemaning: time,
-        canFlow: true
+        canFlow: flow
       };
       return db.put(todo, function callback(err, result) {
         console.log(err);
@@ -103,6 +103,22 @@
     div.className = 'editing';
     inputEditTodo.focus();
   }
+  function ChangeFlowTimeState(todo)
+  {
+    console.log(todo.canFlow);
+    if(todo.canFlow)
+    {
+      todo.canFlow = false;
+    }
+    else
+    {
+      todo.canFlow = true;
+    }
+    Promise.all(dbChangedPromises).then(function(){
+      dbChangedPromises.push(db.put(todo));
+    });
+    console.log(todo.canFlow);
+  }
 
   // If they press enter while editing an entry, blur it to trigger save
   // (or delete)
@@ -125,6 +141,10 @@
     label.appendChild( document.createTextNode(todo.title));
     label.addEventListener('dblclick', todoDblClicked.bind(this, todo));
 
+    var labelTimer = document.createElement("label");
+    labelTimer.id = "Timer_"+todo._id;
+    labelTimer.innerHTML = "" + todo.timeRemaning;
+
     var deleteLink = document.createElement('button');
     deleteLink.className = 'destroy';
     deleteLink.addEventListener( 'click', deleteButtonPressed.bind(this, todo));
@@ -132,21 +152,13 @@
 
     var timeFlowSwitch = document.createElement("button");
     timeFlowSwitch.className = "timeFlowSwitch";
-    timeFlowSwitch.addEventListener("click", function(){
-      if(todo.timeFlowSwitch == false)
-      {
-        todo.timeFlowSwitch = true;
-      }
-      else
-      {
-        todo.timeFlowSwitch = false;
-      }
-    });
+    timeFlowSwitch.addEventListener("click", ChangeFlowTimeState.bind(this, todo));
 
     var divDisplay = document.createElement('div');
     divDisplay.className = 'view';
     divDisplay.appendChild(checkbox);
     divDisplay.appendChild(label);
+    divDisplay.appendChild(labelTimer);
     divDisplay.appendChild(deleteLink);
     divDisplay.appendChild(timeFlowSwitch);
 
@@ -164,7 +176,7 @@
     li.appendChild(inputEditTodo);
 
     if (todo.completed) {
-      li.className += 'complete';
+      li.className += ' complete';
       checkbox.checked = true;
     }
 
@@ -194,7 +206,7 @@
     if (event.keyCode === ENTER_KEY) {
       Promise.all(dbChangedPromises).then(function(){
         dbChangedPromises = [];
-        dbChangedPromises.push(addTodo(newTodoDom.value, false, 30));
+        dbChangedPromises.push(addTodo(newTodoDom.value, false, 30, false));
         newTodoDom.value = '';
       });
       
@@ -211,9 +223,10 @@
   StartTimer();
   function StartTimer()
   {
-    var timer = new Timer();
+    timer = new Timer();
     timer.start();
     timer.addEventListener('secondsUpdated', function (e) {
+
       db.allDocs({include_docs: true, descending: true}, function(err, doc) {
 
         doc.rows.forEach(function(todo)
@@ -222,11 +235,23 @@
             {
               if(todo.doc.timeRemaning > 0)
               {
-                todo.doc.timeRemaning = todo.doc.timeRemaning - 1;
-                console.log(todo.doc.timeRemaning);
-                Promise.all(dbChangedPromises).then(function(){
-                  db.put(todo.doc);
-                });
+                console.log(document.getElementById(todo.doc._id).className);
+                if(!(document.getElementById(todo.doc._id).className == "Draggable gu-transit"))
+                {
+                  if(!(document.getElementById(todo.doc._id).className == "Draggable gu-mirror"))
+                  {
+                    
+                      todo.doc.timeRemaning = todo.doc.timeRemaning - 1;
+                      console.log(todo.doc.timeRemaning);
+                      Promise.all(dbChangedPromises).then(function(){
+                      db.put(todo.doc);
+                      });  
+                    
+                 
+                  }
+
+                }
+
               }
             }
           });
@@ -284,7 +309,7 @@
           {
               console.log(todo.title);
 
-              dbChangedPromises.push(addTodo(todo.title,todo.completed,todo.timeRemaning).catch(err =>{
+              dbChangedPromises.push(addTodo(todo.title,todo.completed,todo.timeRemaning,todo.canFlow).catch(err =>{
                 console.log(err);
               }));
             // db.put(todoNew).then(function()
