@@ -4,3 +4,5 @@ How To
 python -m SimpleHTTPServer
 
 -Poi tenendo il terminale aperto vai da browser al link localhost:8000
+-https://github.com/NorthwoodsSoftware/GoJS/blob/master/samples/htmlDragDrop.html link al drag and drop
+(se quello che hai provato non funziona...)
