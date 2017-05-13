@@ -128,7 +128,16 @@
       inputEditTodo.blur();
     }
   }
-
+ //function addTodo(text, completed, time, flow)
+  function SetUpList()
+  {
+    var ListDefaultObj = document.getElementById("lists");
+    var ListObj = ListDefaultObj.getElementsByTagName("option");
+    for (var i=0;i<ListObj.length;++i)
+    {
+      ListObj[i].addEventListener("dblclick",addTodo.bind(this, ListObj[i].innerHTML, false, 30,false));
+    }
+  }
   // Given an object representing a todo, this will create a list item
   // to display it.
   function createTodoListItem(todo) {
@@ -220,7 +229,9 @@
   addEventListeners();
   showTodos();
   UpdateDragAndDrop();
+  SetUpList();
   StartTimer();
+
   function StartTimer()
   {
     timer = new Timer();
